@@ -174,7 +174,28 @@ def PatchRL(FastLanguageModel):
         if hasattr(current_trainer, unwrap):
             try: exec(f"trl.trainer.{trainer}.{unwrap} = unsloth_{unwrap}")
             except: continue
-    exec(f"Trainer.prediction_step=unsloth_prediction_step")
+
+    # FIXED: Don't globally patch Trainer.prediction_step - only patch for RL trainers
+    # The old code patched ALL trainers even for standard SFT, causing errors
+    # Now we make it conditional: only use RL prediction_step if it's actually an RL task
+    original_prediction_step = Trainer.prediction_step
+
+    def conditional_prediction_step(self, model, inputs, prediction_loss_only, ignore_keys):
+        """Conditional prediction_step that detects RL vs SFT tasks"""
+        has_labels = False if len(self.label_names) == 0 else all(inputs.get(k) is not None for k in self.label_names)
+
+        # Detect if this is an RL task (has "prompt" field) vs SFT task (has "input_ids"/"labels")
+        is_rl_task = "prompt" in inputs and not has_labels
+
+        if is_rl_task:
+            # Use RL-specific prediction_step
+            return unsloth_prediction_step(self, model, inputs, prediction_loss_only, ignore_keys)
+        else:
+            # Use standard transformers prediction_step for SFT
+            return original_prediction_step(self, model, inputs, prediction_loss_only, ignore_keys)
+
+    # Patch with conditional version instead of always using RL version
+    exec(f"Trainer.prediction_step=conditional_prediction_step")
     pass
 pass
 
