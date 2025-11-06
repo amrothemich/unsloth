@@ -799,8 +799,11 @@ def matmul_lora(X, W, W_quant, A, B, s, out = None):
     if A is not None:
         # LoRA is enabled
         A, B = A.t(), B.t()
-        XA = torch_matmul(X, A.to(dtype))
-        out.addmm_(XA, B.to(dtype), alpha = s)
+        # Ensure LoRA weights exactly match input dtype
+        A_cast = A.to(dtype, non_blocking=True)
+        B_cast = B.to(dtype, non_blocking=True)
+        XA = torch_matmul(X, A_cast)
+        out.addmm_(XA, B_cast, alpha = s)
         # out += (X @ A.to(dtype)) @ (s * B.to(dtype))
     pass
 
