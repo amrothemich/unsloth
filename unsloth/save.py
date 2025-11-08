@@ -2454,6 +2454,8 @@ def unsloth_generic_save(
         output_dtype         = None,
         low_disk_space_usage = True,
         use_temp_file        = False,
+        max_shard_size       = max_shard_size,
+        safe_serialization   = safe_serialization,
     )
     return
 pass
