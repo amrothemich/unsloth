@@ -101,6 +101,7 @@ global DISABLE_COMPILE_MODEL_NAMES
 # Must be alphabetically sorted for each entry
 DISABLE_COMPILE_MODEL_NAMES = [
     "aya_vision",
+    "gpt_oss",
     "modernbert",
     "granite,llava_next",  # Granite-vision 3
 ]
