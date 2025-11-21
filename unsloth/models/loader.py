@@ -171,7 +171,7 @@ class FastLanguageModel(FastLlamaModel):
                 resize_model_vocab = resize_model_vocab,  # [TODO] No effect
                 revision = revision,
                 return_logits = False,  # Return logits
-                fullgraph = True,  # No graph breaks
+                fullgraph = False,  # Allow graph breaks for Params4bit
                 use_exact_model_name = use_exact_model_name,
                 offload_embedding = offload_embedding,
                 float32_mixed_precision = float32_mixed_precision,
@@ -465,7 +465,7 @@ class FastLanguageModel(FastLlamaModel):
                 resize_model_vocab = resize_model_vocab,  # [TODO] No effect
                 revision = revision,
                 return_logits = False,  # Return logits
-                fullgraph = True,  # No graph breaks
+                fullgraph = False,  # Allow graph breaks for Params4bit
                 use_exact_model_name = use_exact_model_name,
                 offload_embedding = offload_embedding,
                 float32_mixed_precision = float32_mixed_precision,
